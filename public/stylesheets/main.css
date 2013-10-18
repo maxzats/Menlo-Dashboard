@@ -1,0 +1,156 @@
+/* Move down content because we have a fixed navbar that is 50px tall */
+body {
+    padding-top: 10px;
+    padding-bottom: 20px;
+}
+
+.mzhidden {
+    display: none;
+}
+
+.incorrect-login {
+    color: #ff0000 !important;
+}
+.page-header {
+    margin-top: 70px;
+}
+
+
+.admin-badge {
+    font-size: 14px;
+}
+
+.add-course {
+    font-size: 13px;
+    width: 200px;
+    height: 25px;
+}
+
+.twitter-typeahead .tt-query,
+.twitter-typeahead .tt-hint {
+    margin-bottom: 0;
+    width: 400px;
+}
+.tt-hint {
+    display: none;
+}
+
+.tt-dropdown-menu {
+    min-width: 160px;
+    margin-top: 2px;
+    padding: 5px 0;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border: 1px solid rgba(0,0,0,.2);
+    *border-right-width: 2px;
+    *border-bottom-width: 2px;
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+    -webkit-box-shadow: 0 5px 10px rgba(0,0,0,.2);
+    -moz-box-shadow: 0 5px 10px rgba(0,0,0,.2);
+    box-shadow: 0 5px 10px rgba(0,0,0,.2);
+    -webkit-background-clip: padding-box;
+    -moz-background-clip: padding;
+    background-clip: padding-box;
+}
+
+.tt-suggestion {
+    display: block;
+    padding: 3px 20px;
+}
+
+.tt-suggestion.tt-is-under-cursor {
+    color: #fff;
+    background-color: #0081c2;
+    background-image: -moz-linear-gradient(top, #0088cc, #0077b3);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#0088cc), to(#0077b3));
+    background-image: -webkit-linear-gradient(top, #0088cc, #0077b3);
+    background-image: -o-linear-gradient(top, #0088cc, #0077b3);
+    background-image: linear-gradient(to bottom, #0088cc, #0077b3);
+    background-repeat: repeat-x;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff0088cc', endColorstr='#ff0077b3', GradientType=0)
+}
+
+.tt-suggestion.tt-is-under-cursor a {
+    color: #fff;
+}
+
+.tt-suggestion p {
+    margin: 0;
+}
+
+#loading {
+    margin: 0 auto;
+    text-align: center;
+    margin-top: 40px;
+}
+.loading-text {
+    font-size: 20px;
+}
+
+.classList li:nth-child(7) {
+    color: #ff4500 !important;
+}
+.col-md-3 a {
+    color: inherit;
+}
+.classList a {
+    color: inherit;
+}
+.classList a:hover {
+    color: darkcyan;
+}
+.clearBtn {
+    height: 28px;
+    line-height: 14px;
+}
+
+.col-md-3 a:hover {
+    color: darkcyan;
+}
+
+.fullscreen-icon {
+    font-size: 18px;
+}
+.schedule-planner {
+    min-height: 400px;
+}
+
+.firstSemester {
+    float: left;
+    width: 49%;
+}
+.secondSemester {
+    float: right;
+    width: 49%;
+}
+#freshmanCourseSelect {
+    background-color: #ffffff;
+    width: 470px;
+}
+.glyphicon-star {
+    color: #daa520;
+}
+
+#scheduleLoading {
+    margin: 100px auto 0 auto;
+    width: 180px;
+    font-size: 14px;
+    text-align: center;
+
+}
+.mzshown {
+    display: inline-block;
+}
+.notes {
+    resize: none;
+}
+.savedText {
+    font-size: 21px;
+    color: #006400;
+
+}
+.completedRequirement {
+    text-decoration: line-through;
+}

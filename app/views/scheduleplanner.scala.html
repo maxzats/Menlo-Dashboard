@@ -1,0 +1,208 @@
+@(User: User)
+@_chrome{
+    @_navigation(User)("scheduleplanner")
+} {
+    <script>
+    var Routes = {
+        courseTypeAhead: "@routes.SchedulePlanner.courseTypeahead()",
+        getCoursesRoute: "@routes.SchedulePlanner.courseObjects()",
+        getRequiredCourses: "@routes.SchedulePlanner.getRequiredCourses()",
+        saveSchedule: "@routes.SchedulePlanner.save()",
+        getSchedule: "@routes.SchedulePlanner.loadSchedule()",
+        saveServiceHours: "@routes.SchedulePlanner.saveServiceHours()",
+        savePECredits: "@routes.SchedulePlanner.savePECredits()"
+
+    }
+    </script>
+    <script src="@routes.Assets.at("javascripts/angular.js")"></script>
+    <script src="@routes.Assets.at("javascripts/typeahead.min.js")"></script>
+    <script src="@routes.Assets.at("javascripts/transit.js")"></script>
+    <script src="@routes.Assets.at("javascripts/scheduleplanner.js")"></script>
+
+    <!-- Main jumbotron for a primary marketing message or call to action -->
+    @*<div class="jumbotron">*@
+    <div class="container" id="main-container">
+        <div id="scheduleLoading">
+            <img src="@routes.Assets.at("images/ajax-loader.gif")"> Loading, please wait...
+        </div>
+        <div id="theSchedule" class="mzhidden">
+            <div class="page-header" id="scheduleHeader">
+                <h1>Schedule Planner</h1>
+            </div>
+            @_freshmanschedule(User)
+            @_sophomoreschedule(User)
+            @_juniorschedule(User)
+            @_seniorschedule(User)
+            <div class="row">
+
+                @* Freshman Column *@
+                <div class="col-md-3" id="freshmanColumn">
+                    <h3>Freshman <a href="#" style="color: black;" id="freshmanExpand"><span class="glyphicon glyphicon-pencil fullscreen-icon"></span></a></h3>
+                    <span ng-show="freshmanClasses.length == 0">No courses selected</span>
+
+                    <h5>First Semester</h5>
+                    <ol class="classList">
+                        <li ng-repeat="class in freshmanClasses | filter:firstSemester">
+                            <a href="#" ng-click="showCourseDetails(class.id)">{{class.name}}</a>
+                            <span ng-show="(class.id == freshmanTopCourse[0].id)" class="glyphicon glyphicon-star"></span>
+                        </li>
+                    </ol>
+                    <h5>Second Semester</h5>
+                    <ol class="classList">
+                        <li ng-repeat="class in freshmanClasses | filter:secondSemester">
+                            <a href="#" ng-click="showCourseDetails(class.id)">{{class.name}}</a>
+                            <span ng-show="(class.id == freshmanTopCourse[0].id)" class="glyphicon glyphicon-star"></span>
+                        </li>
+
+                    </ol>
+                </div>
+
+                @* Sophomore Column *@
+                <div class="col-md-3" id="sophomoreColumn">
+                    <h3>Sophomore <a href="#" style="color: black;" id="sophomoreExpand"><span class="glyphicon glyphicon-pencil fullscreen-icon"></span></a></h3>
+                    <span ng-show="sophomoreClasses.length == 0">No courses selected</span>
+
+                    <h5>First Semester</h5>
+                    <ol class="classList">
+                        <li ng-repeat="class in sophomoreClasses | filter:firstSemester">
+                            <a href="#" ng-click="showCourseDetails(class.id)">{{class.name}}</a>
+                            <span ng-show="(class.id == sophomoreTopCourse[0].id)" class="glyphicon glyphicon-star"></span>
+                        </li>
+                    </ol>
+                    <h5>Second Semester</h5>
+                    <ol class="classList">
+                        <li ng-repeat="class in sophomoreClasses | filter:secondSemester">
+                            <a href="#" ng-click="showCourseDetails(class.id)">{{class.name}}</a>
+                            <span ng-show="(class.id == sophomoreTopCourse[0].id)" class="glyphicon glyphicon-star"></span>
+                        </li>
+
+                    </ol>
+                </div>
+
+                @* Junior Column *@
+                <div class="col-md-3" id="juniorColumn">
+                    <h3>Junior <a href="#" style="color: black;" id="juniorExpand"><span class="glyphicon glyphicon-pencil fullscreen-icon"></span></a></h3>
+                    <span ng-show="juniorClasses.length == 0">No courses selected</span>
+
+                    <h5>First Semester</h5>
+                    <ol class="classList">
+                        <li ng-repeat="class in juniorClasses | filter:firstSemester">
+                            <a href="#" ng-click="showCourseDetails(class.id)">{{class.name}}</a>
+                            <span ng-show="(class.id == juniorTopCourse[0].id)" class="glyphicon glyphicon-star"></span>
+                        </li>
+                    </ol>
+                    <h5>Second Semester</h5>
+                    <ol class="classList">
+                        <li ng-repeat="class in juniorClasses | filter:secondSemester">
+                            <a href="#" ng-click="showCourseDetails(class.id)">{{class.name}}</a>
+                            <span ng-show="(class.id == juniorTopCourse[0].id)" class="glyphicon glyphicon-star"></span>
+                        </li>
+
+                    </ol>
+                </div>
+
+                @* Senior Column *@
+                <div class="col-md-3" id="seniorColumn">
+                    <h3>Senior <a href="#" style="color: black;" id="seniorExpand"><span class="glyphicon glyphicon-pencil fullscreen-icon"></span></a></h3>
+                    <span ng-show="seniorClasses.length == 0">No courses selected</span>
+
+                    <h5>First Semester</h5>
+                    <ol class="classList">
+                        <li ng-repeat="class in seniorClasses | filter:firstSemester">
+                            <a href="#" ng-click="showCourseDetails(class.id)">{{class.name}}</a>
+                            <span ng-show="(class.id == seniorTopCourse[0].id)" class="glyphicon glyphicon-star"></span>
+                        </li>
+                    </ol>
+                    <h5>Second Semester</h5>
+                    <ol class="classList">
+                        <li ng-repeat="class in seniorClasses | filter:secondSemester">
+                            <a href="#" ng-click="showCourseDetails(class.id)">{{class.name}}</a>
+                            <span ng-show="(class.id == seniorTopCourse[0].id)" class="glyphicon glyphicon-star"></span>
+                        </li>
+
+                    </ol>
+                </div>
+            </div>
+        <hr>
+
+            @** Graduation Requirements **@
+            <div id="graduationRequirements" class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Graduation Requirements</h3>
+                </div>
+                <div class="panel-body">
+                    <p>Keep track of your Community Service hours, Art and P.E. credits here.</p>
+
+                    <h5>Community Service: {{schedule.serviceHours}} out of {{schedule.requiredHours}} hours ({{(schedule.serviceHours/schedule.requiredHours)*100 | number:0}}%)</h5>
+                    <div class="progress" style="width: 80%; float: left;">
+                        <div id="community-service" class="progress-bar progress-bar-danger" style="width: {{(schedule.serviceHours/schedule.requiredHours)*100}}%;" aria-valuemax="100" aria-valuemin="0" role="progressbar"></div>
+                    </div>
+                    <span class="pull-left btn btn-default clearBtn" ng-click="editServiceHours()" style="margin-left: 30px;">Enter Hours</span>
+                    <div style="clear: both"></div>
+
+                    <br />
+
+                    <h5>Arts Credits: {{schedule.artsCredits}} out of {{schedule.requiredArtsCredits}} credits ({{(getArtsCredits()/schedule.requiredArtsCredits)*100 | number:0}}%) &mdash; <em style="font-weight: normal">Arts credits will be updated as you add arts courses to your schedule.</em></h5>
+                    <div class="progress" style="width: 80%; float: left;">
+                        <div id="arts" class="progress-bar progress-bar-danger" style="width: {{(getArtsCredits()/schedule.requiredArtsCredits)*100}}%;" aria-valuemax="100" aria-valuemin="0"  role="progressbar"></div>
+                    </div>
+                    <div style="clear: both"></div>
+
+                    <br />
+
+                    <h5>PE Credits: {{getPECredits()}} out of {{schedule.requiredPECredits}} credits ({{(schedule.PECredits/schedule.requiredPECredits)*100 | number:0}}%) &mdash; <em style="font-weight: normal">P.E. credits will be updated as you add P.E-credited courses to your schedule.
+                        <br />If you receive P.E. credits for an outside school activity, you may manually add P.E. credits via the button on the right.</em></h5>
+                    <div class="progress" style="width: 80%; float: left;">
+                        <div id="pe" class="progress-bar progress-bar-danger" style="width: {{(schedule.PECredits/schedule.requiredPECredits)*100}}%;" aria-valuemax="100" aria-valuemin="0"  role="progressbar"></div>
+                    </div>
+                    <span class="pull-left btn btn-default clearBtn" ng-click="editPECredits()" style="margin-left: 30px;">Enter P.E. Credits</span>
+
+                </div>
+            </div>
+
+            @** Include Service Hours Modal **@
+            @_schedule_servicehours_modal()
+
+            @** Include P.E. Credits Modal **@
+            @_schedule_pecredits_modal()
+
+        @** End theSchedule **@
+        </div>
+
+
+        @* Too Many Courses Dialog *@
+        <div class="modal fade" id="tooManyCoursesDialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title">No room!</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>You are attempting to add a course, but you do not have room to do so. The maximum number of courses per semester is 7.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" data-dismiss="modal" class="btn btn-primary">OK</button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+
+        @* Course Details Dialog *@
+        <div class="modal fade" id="courseDetails">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="courseDetailsName">No room!</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p id="courseDetailsDescription"></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" data-dismiss="modal" class="btn btn-primary">OK</button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+}(true)("SchedulerCtrl")

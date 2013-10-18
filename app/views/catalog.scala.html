@@ -1,0 +1,42 @@
+@(Courses: List[Course])(Categories: List[Category])(User: User)
+@_chrome{
+    @_navigation(User)("courses")
+} {
+    <script src="@routes.Assets.at("javascripts/catalog.js")"></script>
+    <style>
+    .menlo-logo{
+    background-repeat: no-repeat;
+    background-position: 85%;
+    background-position-y: 79%;
+    background-opacity: 40%;
+    background-image: url("@routes.Assets.at("images/menlo.png")");
+    }
+    </style>
+    <!-- Main jumbotron for a primary marketing message or call to action -->
+    @*<div class="jumbotron">*@
+        <div class="container">
+            <div class="page-header">
+                <h1>Course Catalog</h1>
+            </div>
+            <ul class="nav nav-tabs">
+            @for((category, index) <- Categories.zipWithIndex) {
+                <li data-category-id="@category.getId()" class="categoryTab @if(index == 0) { first }"><a href="#">@category.getName()</a></li>
+            }
+            </ul>
+
+            <div id="courses">
+            @for(course <- Courses) {
+                <div class="mzhidden course" data-in-category="@if(course.getCategory() != null) { @course.getCategory.getId() }">
+                    <h2>@course.getName()</h2>
+                    <div id="course-description-@course.getId()">
+                    @Html(course.getDescription())
+                    <br /><br />
+                    <p><strong>Suggested for:</strong> @course.getFormattedAvailability().</p>
+                    <p><strong>Other Requirements:</strong> @course.getOtherRequirements()</p>
+                    </div>
+                </div>
+            }
+            </div>
+    @*</div>*@
+    <hr>
+}(false)(null)

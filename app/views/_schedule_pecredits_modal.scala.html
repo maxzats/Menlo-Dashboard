@@ -1,0 +1,27 @@
+@* PE Credits Edit Modal *@
+<div class="modal fade" id="PECreditsModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">P.E. Credits</h4>
+            </div>
+            <div class="modal-body">
+                <p>If you receive P.E. credits for an activity outside of school, please enter the number of credits here:
+                    <select id="PECreditsSelect" class="form-control">
+                    @for( i <- 0 to 20) {
+                        @if( i == 1 ) {
+                            <option value="@i">@i credit</option>
+                        } else {
+                            <option value="@i">@i credits</option>
+                        }
+                    }
+                    </select>
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" data-dismiss="modal" ng-click="updatePECredits()" class="btn btn-primary">OK</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

@@ -1,0 +1,309 @@
+@(Courses: List[Course])(Categories: List[Category])(User: User)
+
+@_chrome{
+    @_navigation(User)("admin__managecourses")
+} {
+    <script>
+    var Routes = {
+        getCourse: "@routes.Admin.getCourse(0)"
+    }
+    </script>
+    <script src="@routes.Assets.at("javascripts/admin__managecourses.js")"></script>
+    <script src="@routes.Assets.at("javascripts/typeahead.min.js")"></script>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>Manage Courses <span class="admin-badge label label-primary">ADMIN</span></h1>
+        </div>
+
+        @if(flash().contains("error")) {
+            <div class="alert alert-danger alert-dismissable">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                @flash.get("error")
+            </div>
+        }
+        @if(flash().contains("success")) {
+            <div class="alert alert-success alert-dismissable">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                @flash.get("success")
+            </div>
+        }
+        <a data-toggle="modal" href="#newCourseModal" class="btn btn-primary"><span class="glyphicon glyphicon-pencil"></span> New Course</a>
+        <br />
+        <table class="table table-striped">
+            <thead>
+                <th width="3%">#</th>
+                <th width="53%">Name</th>
+                <th width="14%">Visible</th>
+                <th width="20%">Category</th>
+                <th width="10%">Actions</th>
+            </thead>
+            <tbody>
+            @if(Courses.size() == 0) {
+                <td colspan="5" style="text-align: center">You have not created any courses yet.</td>
+            }
+            @for((course, index) <- Courses.zipWithIndex) {
+                <tr>
+                    <td>@(index+1)</td>
+                    <td>@course.getName()</td>
+                    <td>@if(course.isVisible()) { Yes } else { No }</td>
+                    <td>@if(course.getCategory() != null) { @course.getCategory().getName() }</td>
+                    <td><a data-toggle="modal" data-course-id="@course.getId()" class="edit-course course-action" title="Edit this Course" style="color: black" href="#editCourseModal"><span class="glyphicon glyphicon-pencil"></span></a>
+                        <a data-toggle="modal" data-course-id="@course.getId()" class="delete-course course-action" title="Delete this Course" style="color: black" href="#deleteCourseModal"><span class="glyphicon glyphicon-remove"></span></a>
+                    </td>
+                </tr>
+            }
+            </tbody>
+
+
+        </table>
+
+        <div class="modal fade" id="deleteCourseModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title">Confirm Deletion</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you would like to delete this course?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <form method="POST" action="@routes.Admin.deleteCourse()">
+
+                            <input type="hidden" name="id" id="courseId" value="-1" />
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                            <input type="submit" class="btn btn-primary" value="Confirm" />
+                        </form>
+                    </div>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+
+
+
+
+        <div class="modal fade" id="newCourseModal">
+            <div class="modal-dialog">
+                <script>
+                $(document).ready(function(){
+                        $("#newCourseForm").MZAjaxForm({
+                        formId: "newCourseForm",
+                        action: "@routes.Admin.newCourse()",
+                        errorId: "courseNewError",
+                        errorMessage: "Unable to access the server. Please try your request later.",
+                        logging: false,
+                        successId: "success",
+                        successMessage: "Successfully created a new course."
+                    });
+                });
+                </script>
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title">Create a New Course</h4>
+                    </div>
+                    <form id="newCourseForm" class="form-horizontal">
+                        <div class="modal-body">
+                            <div class="alert alert-danger mzhidden" id="courseNewError"></div>
+                            <p>Please fill out the following form to create a new course:</p>
+                            <div class="form-group">
+                                <label for="newCourseName" class="col-lg-3 control-label">Course Name</label>
+                                <div class="col-lg-9">
+                                    <input type="text" name="name" class="form-control" id="newCourseName">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="newCourseVisible" class="col-lg-3 control-label">Visible</label>
+                                <div class="col-lg-9">
+                                    <input type="checkbox" checked="checked" id="newCourseVisibleBox">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="newcourseCategory" class="col-lg-3 control-label">Category</label>
+                                <div class="col-lg-9">
+                                    <select class="form-control" name="courseCategoryIdTransientString">
+                                    @for(category <- Categories) {
+                                        <option value="@category.getId()">@category.getName()</option>
+                                    }
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="creditType" class="col-lg-3 control-label">Credit Type</label>
+                                <div class="col-lg-9">
+                                    <select class="form-control" name="creditType">
+                                        <option value="class">Class</option>
+                                        <option value="art">Art</option>
+                                        <option value="PE">P.E.</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="newCourseDuration" class="col-lg-3 control-label">Duration</label>
+                                <div class="col-lg-9">
+                                    <select id="newCourseDuration" name="duration" class="form-control">
+                                        <option value="12">Year-long</option>
+                                        <option value="1">First Semester</option>
+                                        <option value="2">Second Semester</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="availability" class="col-lg-3 control-label">Suggested for</label>
+                                <div class="col-lg-9">
+                                    <label style="font-weight: normal"><input class="availability" type="checkbox" value="Freshmen" /> Freshmen</label>
+                                    <br />
+                                    <label style="font-weight: normal"><input class="availability" type="checkbox" value="Sophomores" /> Sophomores</label>
+                                    <br />
+                                    <label style="font-weight: normal"><input class="availability" type="checkbox" value="Juniors" /> Juniors</label>
+                                    <br />
+                                    <label style="font-weight: normal"><input class="availability" type="checkbox" value="Seniors" /> Seniors</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="availability" class="col-lg-3 control-label">Description</label>
+                                <div class="col-lg-9">
+                                    <textarea class="form-control" name="description" cols="40" rows="10"></textarea>
+                                </div>
+                            </div>
+
+
+                            <div class="form-group">
+                                <label for="availability" class="col-lg-3 control-label">Prerequisites & Requirements</label>
+                                <div class="col-lg-9">
+                                    <textarea class="form-control" name="otherRequirements" cols="40" rows="10"></textarea>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="modal-footer">
+                            <input type="hidden" id="newCourseVisible" value="true" name="courseVisibilityTransientString" />
+                            <input type="hidden" id="availability" name="availability" />
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                            <input type="submit" class="btn btn-primary" value="Create" />
+                    </form>
+                </div>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+
+    @* Edit Course Modal *@
+    <div class="modal fade" id="editCourseModal">
+        <div class="modal-dialog">
+            <script>
+            $(document).ready(function(){
+                $("#editCourseForm").MZAjaxForm({
+                    formId: "editCourseForm",
+                    action: "@routes.Admin.editCourse()",
+                    errorId: "courseEditError",
+                    errorMessage: "Unable to access the server. Please try your request later.",
+                    logging: false,
+                    successId: "success",
+                    convertLinebreaks: ["description"],
+                    successMessage: "Successfully created a new course."
+                });
+            });
+            </script>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">Editing Course</h4>
+                </div>
+                <form id="editCourseForm" class="form-horizontal">
+                    <div class="modal-body">
+                        <div id="loading">
+                            <img src="@routes.Assets.at("images/ajax-loader.gif")" />
+                            <span class="loading-text"> Loading, please wait... </span>
+                        </div>
+
+                        <div id="editCourseContent" class="mzhidden">
+                            <div class="alert alert-danger mzhidden" id="courseEditError"></div>
+                            <p>Please fill out the following form to edit the course:</p>
+                            <div class="form-group">
+                                <label for="editCourseName" class="col-lg-3 control-label">Course Name</label>
+                                <div class="col-lg-9">
+                                    <input type="text" name="name" class="form-control" id="editCourseName">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="editCourseVisible" class="col-lg-3 control-label">Visible</label>
+                                <div class="col-lg-9">
+                                    <input type="checkbox" id="editCourseVisibleBox">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="editCourseCategory" class="col-lg-3 control-label">Category</label>
+                                <div class="col-lg-9">
+                                    <select id="editCourseCategory" name="courseCategoryIdTransientString" class="form-control">
+                                    @for(category <- Categories) {
+                                        <option value="@category.getId()">@category.getName()</option>
+                                    }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="creditType" class="col-lg-3 control-label">Credit Type</label>
+                                <div class="col-lg-9">
+                                    <select class="form-control" id="editCourseCreditType" name="creditType">
+                                        <option value="class">Class</option>
+                                        <option value="art">Art</option>
+                                        <option value="PE">P.E.</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="editCourseDuration" class="col-lg-3 control-label">Duration</label>
+                                <div class="col-lg-9">
+                                    <select id="editCourseDuration" name="duration" class="form-control">
+                                        <option value="12">Year-long</option>
+                                        <option value="1">First Semester</option>
+                                        <option value="2">Second Semester</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="availability" class="col-lg-3 control-label">Suggested for</label>
+                                <div class="col-lg-9">
+                                    <label style="font-weight: normal"><input class="availability" id="editCourseFreshmen" type="checkbox" value="Freshmen" /> Freshmen</label>
+                                    <br />
+                                    <label style="font-weight: normal"><input class="availability" id="editCourseSophomores" type="checkbox" value="Sophomores" /> Sophomores</label>
+                                    <br />
+                                    <label style="font-weight: normal"><input class="availability" id="editCourseJuniors" type="checkbox" value="Juniors" /> Juniors</label>
+                                    <br />
+                                    <label style="font-weight: normal"><input class="availability" id="editCourseSeniors" type="checkbox" value="Seniors" /> Seniors</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="availability" class="col-lg-3 control-label">Description</label>
+                                <div class="col-lg-9">
+                                    <textarea class="form-control" id="editCourseDescription" name="description" cols="40" rows="10"></textarea>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="availability" class="col-lg-3 control-label">Prerequisites & Requirements</label>
+                                <div class="col-lg-9">
+                                    <textarea class="form-control" id="editCourseOtherRequirements" name="otherRequirements" cols="40" rows="10"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <input type="hidden" id="editCourseVisible" name="courseVisibilityTransientString" />
+                        <input type="hidden" id="editCourseAvailability" name="availability" />
+                        <input type="hidden" id="editCourseId" name="id" />
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                        <input type="submit" class="btn btn-primary" value="Save" />
+                </form>
+            </div>
+        </div>
+    </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+
+
+    <hr>
+}(false)(null)

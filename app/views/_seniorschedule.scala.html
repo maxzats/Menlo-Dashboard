@@ -1,0 +1,143 @@
+@(User: User)
+<div id="seniorExpanded" style="display: none;">
+    <div class="page-header">
+        <h2>@User.getFirstName()'s Senior Schedule
+            <div class="pull-right">
+                <span class="mzhidden savedText"><span class="glyphicon glyphicon-ok"></span> Saved!</span>
+                <a href="" ng-click="save(false)" class="btn btn-primary" id="seniorContract"><span class="glyphicon glyphicon-arrow-left"></span> Save and go back</a>
+                <a href="" ng-click="save(true)" class="margin-left: 10px; btn btn-primary" id="save"><span class="glyphicon glyphicon-ok"></span> Save</a>
+            </div>
+        </h2>
+    </div>
+
+    <div class="pull-left" style="width: 44%">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h2 class="panel-title">Your Schedule</h2>
+            </div>
+            <div class="panel-body">
+                <div class="firstSemester">
+                    <h4>First Semester</h4>
+                    <ol class="classList">
+                        <li ng-repeat="class in seniorClasses | filter:firstSemester">
+                            <a href="" ng-click="showCourseDetails(class.id)">{{class.name}}</a>
+                            <span ng-click="removeCourse(class.id, 'senior')" class="glyphicon glyphicon-remove"></span>
+                            <span ng-show="(class.id == seniorTopCourse[0].id)" class="glyphicon glyphicon-star"></span>
+                        </li>
+                    </ol>
+                </div>
+
+                <div class="secondSemester">
+                    <h4>Second Semester</h4>
+                    <ol class="classList">
+                        <li ng-repeat="class in seniorClasses | filter:secondSemester">
+                            <a href="" ng-click="showCourseDetails(class.id)">{{class.name}}</a>
+                            <span ng-click="removeCourse(class.id, 'senior')" class="glyphicon glyphicon-remove"></span>
+                            <span ng-show="(class.id == seniorTopCourse[0].id)" class="glyphicon glyphicon-star"></span>
+                        </li>
+                    </ol>
+                </div>
+                <div style="clear: both"></div>
+                <div class="sports">
+                    <h4>P.E. Credit Selections</h4>
+                    <ol class="classList">
+                        <li ng-repeat="class in seniorClasses | filter:PECredit">
+                            <a href="" ng-click="showCourseDetails(class.id)">{{class.name}}</a>
+                            <span ng-click="removeCourse(class.id, 'senior')" class="glyphicon glyphicon-remove"></span>
+                            <span ng-show="(class.id == seniorTopCourse[0].id)" class="glyphicon glyphicon-star"></span>
+                        </li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="panel-footer">
+                <input type="text" placeholder="Start typing to add a course..." style="height: 26px;" id="seniorCourseSelect" class="form-control typeahead tt-query" />
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Top Choice</h3>
+            </div>
+            <div class="panel-body">
+                <p>Some students feel strongly about taking a particular course. If this sounds like you, please select your top course below.</p>
+                <ul>
+                    <li ng-repeat="class in seniorTopCourse" ng-show="seniorTopCourse.length != 0">You've selected <strong>{{class.name}}</strong> as your top course.  <br />  <br /> </li>
+                </ul>
+
+                <input type="text" placeholder="Start typing to choose a top course..." style="height: 26px;" id="seniorTopCourseSelect" class="form-control typeahead tt-query" />
+                <span ng-click="clearTopCourse('senior')" class="clearBtn btn btn-default">Clear</span>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Notes</h3>
+            </div>
+            <div class="panel-body">
+                <p>Use this area to keep track of other time-consuming commitments: sports, independent studies, community service projects, etc.</p>
+                <textarea id="juniorNotes" class="notes form-control" rows="15" cols="25"></textarea>
+            </div>
+        </div>
+    </div>
+
+    <div class="pull-right" style="width: 53%">
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Requirements & Things to Note</h3>
+            </div>
+            <div class="panel-body">
+                <span ng-show="(seniorBucketCount).length != 0">
+                    <h4>Required Courses</h4>
+                    <p>You are required to take the following courses. Select the courses to add them to your schedule. If there are multiple choices, select one to fulfill the requirement.</p>
+
+                    <ul id="requirementBuckets">
+                        <li ng-repeat="requirement in courseRequirements|filter:seniorBuckets">
+                            <span ng-show="checkRequirements(requirement.id, requirement.requiredFor)" class="glyphicon glyphicon-check"></span>
+                            <span ng-class="{completedRequirement: requirement.satisfied}" style="font-weight: bold">{{requirement.name}}</span>
+                            <ul id="requiredCourses">
+                                <li ng-click="addRequiredCourse(requirement.id, requiredCourse.id)" ng-repeat="requiredCourse in requirement.courseList">
+                                    <a href="">{{requiredCourse.name}}</a>
+                                </li>
+                            </ul>
+                        </li>
+
+                    </ul>
+                </span>
+
+                <span ng-show="!(seniorClasses).length">As you add courses, the requirements and other things to note about the courses you selected will appear here.</span>
+
+                <div ng-repeat="class in seniorClasses">
+                    <h4>{{class.name}}</h4>
+                    <p>{{class.otherRequirements}}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Freshman Year - At a Glance</h3>
+            </div>
+            <div class="panel-body">
+                <p><strong>Note from Head of School, Than Healy:</strong></p>
+                <em>Welcome to Freshman Year!</em>
+
+                <h5>Some Advice</h5>
+                <ul>
+                    <li>Only 10% of Freshmen do not take a free period -- take one!</li>
+                    <li>Get started on your community service requirements early. You must have completed 20 community service hours each year by the time you graduate</li>
+                    <li>Begin to think about the Arts credits requirement: 3 semesters (15 credits)</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">The Math Flowchart</h3>
+            </div>
+            <div class="panel-body">
+                <img width="100%" src="@routes.Assets.at("images/mathchart.png")">
+            </div>
+        </div>
+    </div>
+</div>

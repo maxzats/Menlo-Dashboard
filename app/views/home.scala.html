@@ -1,0 +1,56 @@
+@(User: User)
+@_chrome{
+    @_navigation(User)("home")
+} {
+    <style>
+    .menlo-logo{
+        background-repeat: no-repeat;
+        background-position: 85%;
+        background-position-y: 79%;
+        background-opacity: 40%;
+        background-image: url("@routes.Assets.at("images/menlo.png")");
+
+    }
+    </style>
+    <!-- Main jumbotron for a primary marketing message or call to action -->
+    <div class="jumbotron menlo-logo">
+        <div class="container">
+            @if(User != null) {
+                <h1>Welcome, @User.getFirstName()</h1>
+            } else {
+                <h1>Menlo Dashboard</h1>
+            }
+            <p>With the Menlo Dashboard, you can:
+                <ul>
+                    <li>Plan courses for Freshman, Sophomore, Junior, and Senior year</li>
+                    <li>Quickly lookup course requirements</li>
+                    <li>Easily share your schedule with parents and advocates</li>
+                </ul>
+            </p>
+            @if(User != null) {
+               <p><a href="@routes.Courses.view()" class="btn btn-primary btn-lg">View Course Catalog &raquo;</a>
+               <a href="@routes.SchedulePlanner.view()" class="btn btn-primary btn-lg">Build Your Schedule  &raquo;</a></p>
+            }
+        </div>
+    </div>
+
+    <div class="container">
+            <!-- Example row of columns -->
+        <div class="row">
+            <div class="col-lg-4">
+                <h2><span class="glyphicon glyphicon-list-alt"></span>&nbsp; &nbsp; Interactive Schedule</h2>
+                <p>The scheduler page provides a user-friendly interface to design a custom schedule. Prerequisites are checked as you go, so you can be confident that your ideal schedule is plausible. The scheduler also tracks your graduation requirements, including P.E. and Art credits. </p>
+        </div>
+            <div class="col-lg-4">
+                <h2><span class="glyphicon glyphicon-book"></span>&nbsp; &nbsp; Course Catalog</h2>
+                <p>In order to build the perfect schedule, a course catalog is available for students to discover courses they may be interested in. The catalog includes all courses offered by Menlo, with a brief description and list of prerequisites for each.  </p>
+            </div>
+
+            <div class="col-lg-4">
+                <h2><span class="glyphicon glyphicon-hand-right"></span>&nbsp; &nbsp; Guided Tours</h2>
+                <p>Each page is designed to be efficient, simple, and easy to use for students, parents and faculty members. However, for those times when you can't quite find what you're looking for, guided tours can be started by clicking the "I need help" button in the top right corner of all pages. </p>
+            </div>
+        </div>
+
+        <hr>
+}(false)(null)

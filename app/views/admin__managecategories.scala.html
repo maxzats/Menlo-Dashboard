@@ -1,0 +1,152 @@
+@(Categories: List[Category])(User: User)
+
+@_chrome{
+    @_navigation(User)("admin__managecategories")
+} {
+    <script src="@routes.Assets.at("javascripts/admin__managecategories.js")"></script>
+    <div class="container">
+        <div class="page-header">
+            <h1>Manage Course Categories <span class="admin-badge label label-primary">ADMIN</span></h1>
+        </div>
+
+        @if(flash().contains("error")) {
+            <div class="alert alert-danger alert-dismissable">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                @flash.get("error")
+            </div>
+        }
+        @if(flash().contains("success")) {
+            <div class="alert alert-success alert-dismissable">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                @flash.get("success")
+            </div>
+        }
+        <a data-toggle="modal" href="#newCategoryModal" class="btn btn-primary"><span class="glyphicon glyphicon-pencil"></span> New Category</a>
+        <br />
+        <table class="table table-striped">
+            <thead>
+                <th>#</th>
+                <th>Name</th>
+                <th>Actions</th>
+            </thead>
+            <tbody>
+            @if(Categories.size() == 0) {
+                <td colspan="3" style="text-align: center">You have not created any categories yet.</td>
+            }
+            @for((category, index) <- Categories.zipWithIndex) {
+                <tr>
+                    <td>@(index+1)</td>
+                    <td>@category.getName()</td>
+                    <td><a data-toggle="modal" data-category-id="@category.getId()" data-category-name="@category.getName()" class="edit-category category-action" title="Edit this Category" style="color: black" href="#editCategoryModal"><span class="glyphicon glyphicon-pencil"></span></a>
+                        <a data-toggle="modal" data-category-id="@category.getId()" class="delete-category category-action" title="Delete this Category" style="color: black" href="#deleteCategoryModal"><span class="glyphicon glyphicon-remove"></span></a>
+                    </td>
+                </tr>
+            }
+            </tbody>
+
+
+        </table>
+
+        <div class="modal fade" id="deleteCategoryModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title">Confirm Deletion</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you would like to delete this category?</p>
+                        <div class="alert alert-block alert-danger fade in">
+                            <h4>Warning</h4>
+                            <p>Deleting this category will also delete all the courses in it!</p>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                    <form method="POST" action="@routes.Admin.deleteCategory()">
+
+                        <input type="hidden" name="id" id="categoryId" value="-1" />
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                        <input type="submit" class="btn btn-primary" value="Confirm" />
+                    </form>
+                    </div>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+
+
+        <div class="modal fade" id="editCategoryModal">
+            <div class="modal-dialog">
+                <script>
+                $(document).ready(function(){
+                    $("#editCategoryForm").MZAjaxForm({
+                        formId: "editCategoryForm",
+                        action: "@routes.Admin.editCategory()",
+                        errorId: "categoryEditError",
+                        errorMessage: "Unable to access the server. Please try your request later.",
+                        logging: true,
+                        successId: "success",
+                        successMessage: "Successfully changed the category name."
+                    });
+                });
+                </script>
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title">Edit Category</h4>
+                    </div>
+                    <form id="editCategoryForm">
+                    <div class="modal-body">
+                        <div class="alert alert-danger mzhidden" id="categoryEditError"></div>
+                        <p>Please enter the new name for this category:</p>
+                        <p><input type="text" name="name" id="editCategoryName" class="form-control" /></p>
+                    </div>
+                    <div class="modal-footer">
+                            <input type="hidden" name="id" id="editCategoryId" value="-1" />
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                            <input type="submit" class="btn btn-primary" value="Save" />
+                        </form>
+                    </div>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+
+
+    <div class="modal fade" id="newCategoryModal">
+        <div class="modal-dialog">
+            <script>
+            $(document).ready(function(){
+                $("#newCategoryForm").MZAjaxForm({
+                    formId: "newCategoryForm",
+                    action: "@routes.Admin.newCategory()",
+                    errorId: "categoryNewError",
+                    errorMessage: "Unable to access the server. Please try your request later.",
+                    logging: false,
+                    successId: "success",
+                    successMessage: "Successfully changed the category name."
+                });
+            });
+            </script>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">Create a Category</h4>
+                </div>
+                <form id="newCategoryForm">
+                    <div class="modal-body">
+                        <div class="alert alert-danger mzhidden" id="categoryNewError"></div>
+                        <p>Please enter a name for the new category:</p>
+                        <p><input type="text" name="name" id="categoryName" class="form-control" /></p>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="hidden" name="id" id="newCategoryId" value="-1" />
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                        <input type="submit" class="btn btn-primary" value="Create" />
+                </form>
+            </div>
+        </div>
+    </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+
+
+        <hr>
+}(false)(null)

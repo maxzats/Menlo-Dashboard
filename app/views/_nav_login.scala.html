@@ -1,0 +1,24 @@
+<script>
+$(document).ready(function(){
+    $("#login").MZAjaxForm({
+        formId: "login",
+        action: "@routes.Application.login()",
+        errorId: "error",
+        errorMessage: "Unable to access the authentication server. Please try your request later.",
+        logging: false,
+        successId: "success",
+        successMessage: "Successfully logged you in!",
+        clearFieldsOnError: true
+    });
+});
+</script>
+<form id="login" class="navbar-form navbar-right">
+    <div class="form-group">
+        <input type="text" id="email" name="email" placeholder="Email" class="form-control">
+    </div>
+    <div class="form-group">
+        <input type="password" id="password" name="password" placeholder="Password" class="form-control">
+    </div>
+    <button type="submit" class="btn btn-success">Sign in</button>
+</form>
+<p id="error" class="navbar-right navbar-text incorrect-login mzhidden">Incorrect.</p>

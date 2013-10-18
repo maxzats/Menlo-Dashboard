@@ -1,0 +1,229 @@
+@(Buckets: List[Bucket])(User: User)
+
+@_chrome{
+    @_navigation(User)("admin__managebuckets")
+} {
+    <script>
+    var Routes = {
+        courseTypeAhead: "@routes.SchedulePlanner.courseTypeahead()",
+        saveBucket: "@routes.Admin.newBucket()",
+        getBucket: "@routes.Admin.getBucket(0)",
+        editBucket: "@routes.Admin.editBucket()"
+
+    }
+    </script>
+    <script src="@routes.Assets.at("javascripts/angular.js")"></script>
+    <script src="@routes.Assets.at("javascripts/typeahead.min.js")"></script>
+    <script src="@routes.Assets.at("javascripts/transit.js")"></script>
+    <script src="@routes.Assets.at("javascripts/admin__managebuckets.js")"></script>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>Manage Required Courses <span class="admin-badge label label-primary">ADMIN</span></h1>
+        </div>
+
+        @if(flash().contains("error")) {
+            <div class="alert alert-danger alert-dismissable">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                @flash.get("error")
+            </div>
+        }
+        @if(flash().contains("success")) {
+            <div class="alert alert-success alert-dismissable">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                @flash.get("success")
+            </div>
+        }
+        <a data-toggle="modal" href="#newBucketModal" class="btn btn-primary"><span class="glyphicon glyphicon-pencil"></span> New Required Course Bucket</a>
+        <br />
+        <table class="table table-striped">
+            <thead>
+                <th width="3%">#</th>
+                <th width="25%">Requirement Name</th>
+                <th width="40%">Required Courses</th>
+                <th width="22%">Required For</th>
+                <th width="10%">Actions</th>
+            </thead>
+            <tbody>
+            @if(Buckets.size() == 0) {
+                <td colspan="5" style="text-align: center">You have not created any course requirements yet.</td>
+            }
+            @for((bucket, index) <- Buckets.zipWithIndex) {
+                <tr>
+                    <td>@(index+1)</td>
+                    <td>@bucket.getName()</td>
+                    <td>@bucket.getFormattedCourseList()</td>
+                    <td>@bucket.getRequiredFor()</td>
+                    <td><a data-toggle="modal" data-bucket-id="@bucket.getId()" class="edit-bucket bucket-action" title="Edit this Bucket" style="color: black" href="#editBucketModal"><span class="glyphicon glyphicon-pencil"></span></a>
+                        <a data-toggle="modal" data-bucket-id="@bucket.getId()" class="delete-bucket bucket-action" title="Delete this Bucket" style="color: black" href="#deleteBucketModal"><span class="glyphicon glyphicon-remove"></span></a>
+                    </td>
+                </tr>
+            }
+
+
+            </tbody>
+
+
+        </table>
+
+        @*** New Bucket Modal ***@
+        <div class="modal fade" id="newBucketModal">
+            <div class="modal-dialog">
+                <script>
+                $(document).ready(function(){
+                    $("#newCategoryForm").MZAjaxForm({
+                        formId: "newCategoryForm",
+                        action: "@routes.Admin.newBucket()",
+                        errorId: "bucketNewError",
+                        errorMessage: "Unable to access the server. Please try your request later.",
+                        logging: false,
+                        successId: "success",
+                        successMessage: "Successfully edited the bucket."
+                    });
+                });
+                </script>
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title">Create a Required Course Bucket</h4>
+                    </div>
+                    <form id="newBucketForm" class="form-horizontal">
+                        <div class="modal-body">
+                            <div class="alert alert-danger mzhidden" id="newBucketError"></div>
+                            <div class="alert alert-danger mzhidden" id="newBucketTooMany">You can only select at the most four courses.</div>
+                            <div class="form-group">
+                                <label for="newBucketName" class="col-lg-3 control-label">Name</label>
+                                <div class="col-lg-9">
+                                    <input type="text" name="name" class="form-control" id="newBucketName">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="newBucketName" class="col-lg-3 control-label">Required For</label>
+                                <div class="col-lg-9">
+                                    <select name="requiredFor" id="newBucketRequiredFor" class="form-control">
+                                        <option value="freshmen">Freshmen</option>
+                                        <option value="sophomores">Sophomores</option>
+                                        <option value="juniors">Juniors</option>
+                                        <option value="seniors">Seniors</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="newBucketName" class="col-lg-3 control-label">Course List</label>
+                                <div class="col-lg-9">
+                                    <ul id="newBucketCourseList">
+                                        <li ng-repeat="course in selectedCourses">
+                                            {{course.name}}
+                                            <span ng-click="removeCourse(course.id)" class="glyphicon glyphicon-remove"></span>
+                                        </li>
+                                    </ul>
+                                    <input type="text" name="name" class="form-control" placeholder="Start typing to add a course..." id="newBucketCourseListAdd" class="form-control typeahead tt-query">
+                                </div>
+                            </div>
+
+                        </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                            <input type="submit" class="btn btn-primary" ng-click="save()" value="Create">
+                        </div>
+
+                </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+
+
+    @*** Edit Bucket Modal ***@
+    <div class="modal fade" id="editBucketModal">
+        <div class="modal-dialog">
+            <script>
+            $(document).ready(function(){
+                $("#editBucketForm").MZAjaxForm({
+                formId: "editBucketForm",
+                action: "@routes.Admin.editBucket()",
+                errorId: "editBucketError",
+                errorMessage: "Unable to access the server. Please try your request later.",
+                logging: false,
+                successId: "success",
+                successMessage: "Successfully edited the bucket."
+                });
+            });
+            </script>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">Editing Course Requirement</h4>
+                </div>
+                <form id="editBucketForm" class="form-horizontal">
+                    <div class="modal-body">
+                        <div class="alert alert-danger mzhidden" id="editBucketError"></div>
+                        <div class="alert alert-danger mzhidden" id="editBucketTooMany">You can only select at the most four courses.</div>
+                        <div class="form-group">
+                            <label for="newBucketName" class="col-lg-3 control-label">Name</label>
+                            <div class="col-lg-9">
+                                <input type="text" name="name" class="form-control" id="editBucketName">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="newBucketName" class="col-lg-3 control-label">Required For</label>
+                            <div class="col-lg-9">
+                                <select name="requiredFor" id="editBucketRequiredFor" class="form-control">
+                                    <option value="freshmen">Freshmen</option>
+                                    <option value="sophomores">Sophomores</option>
+                                    <option value="juniors">Juniors</option>
+                                    <option value="seniors">Seniors</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="newBucketName" class="col-lg-3 control-label">Course List</label>
+                            <div class="col-lg-9">
+                                <ul id="newBucketCourseList">
+                                    <li ng-repeat="course in editBucketCourses">
+                                        {{course.name}}
+                                        <span ng-click="removeEditCourse(course.id)" class="glyphicon glyphicon-remove"></span>
+                                    </li>
+                                </ul>
+                                <input type="text" name="name" class="form-control" placeholder="Start typing to add a course..." id="editBucketCourseListAdd" class="form-control typeahead tt-query">
+                            </div>
+                        </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <input type="hidden" id="editBucketId" value="-1">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <input type="submit" class="btn btn-primary" ng-click="update()" value="Save">
+            </div>
+
+        </div>
+    </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+
+
+    @**** Delete Bucket Modal ***@
+    <div class="modal fade" id="deleteBucketModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title">Confirm Deletion</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you would like to delete this requirement?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <form method="POST" action="@routes.Admin.deleteBucket()">
+                            <input type="hidden" name="id" id="bucketId" value="-1" />
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                            <input type="submit" class="btn btn-primary" value="Confirm" />
+                        </form>
+                    </div>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+
+
+
+    <hr>
+}(true)("BucketCtrl")
