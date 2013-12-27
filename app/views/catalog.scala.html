@@ -2,22 +2,38 @@
 @_chrome{
     @_navigation(User)("courses")
 } {
+    <script>
+        var Routes = {
+            getCoursesRoute: "@routes.SchedulePlanner.courseObjects()",
+            saveCourseCartRoute: "@routes.SchedulePlanner.saveCourseCart()",
+            getCoursesCartRoute: "@routes.SchedulePlanner.getCourseCart()"
+        };
+    </script>
+    <script src="@routes.Assets.at("javascripts/angular.js")"></script>
     <script src="@routes.Assets.at("javascripts/catalog.js")"></script>
-    <style>
-    .menlo-logo{
-    background-repeat: no-repeat;
-    background-position: 85%;
-    background-position-y: 79%;
-    background-opacity: 40%;
-    background-image: url("@routes.Assets.at("images/menlo.png")");
-    }
-    </style>
+    <script src="@routes.Assets.at("javascripts/coursecart.js")"></script>
     <!-- Main jumbotron for a primary marketing message or call to action -->
     @*<div class="jumbotron">*@
         <div class="container">
             <div class="page-header">
-                <h1>Course Catalog</h1>
+                <h1>Course Catalog
+
+                    <div class="pull-right" style="font-size: 14px; font-weight: normal; padding: 5px; background-color: white;">
+                        <ul class="nav nav-pills" style="padding-top: 5px;">
+                            <li class="filterPill active" data-filter="all"><a href="#">All</a></li>
+                            <li class="filterPill" data-filter="freshmen"><a href="#">Freshmen</a></li>
+                            <li class="filterPill" data-filter="sophomores"><a href="#">Sophomores</a></li>
+                            <li class="filterPill" data-filter="juniors"><a href="#">Juniors</a></li>
+                            <li class="filterPill" data-filter="seniors"><a href="#">Seniors</a></li>
+                        </ul>
+                    </div>
+                    <div class="pull-right" style="font-size: 14px; font-weight: normal; padding-top: 20px;">
+                        Filter classes for:
+                    </div>
+                </h1>
             </div>
+            @_courseShoppingCart()
+
             <ul class="nav nav-tabs">
             @for((category, index) <- Categories.zipWithIndex) {
                 <li data-category-id="@category.getId()" class="categoryTab @if(index == 0) { first }"><a href="#">@category.getName()</a></li>
@@ -27,11 +43,14 @@
             <div id="courses">
             @for(course <- Courses) {
                 <div class="mzhidden course" data-in-category="@if(course.getCategory() != null) { @course.getCategory.getId() }">
-                    <h2>@course.getName()</h2>
+                    <h2>@course.getName()
+                    <button type="button" ng-show="notAlreadyAdded(@course.getId())" ng-click="addCourseToCart(@course.getId(), true)" class="btn btn-catalog btn-xs"><span class="glyphicon glyphicon-plus-sign"></span> Add to Cart</button>
+                    <button type="button" ng-show="!notAlreadyAdded(@course.getId())" ng-click="removeCourseFromCart(@course.getId())" class="btn btn-catalog-added btn-xs"><span class="glyphicon glyphicon-minus-sign"></span> Remove from Cart</button>
+                    </h2>
                     <div id="course-description-@course.getId()">
                     @Html(course.getDescription())
                     <br /><br />
-                    <p><strong>Suggested for:</strong> @course.getFormattedAvailability().</p>
+                    <p><strong>Suggested for:</strong> <span class="suggestedFor">@course.getFormattedAvailability().</span> </p>
                     <p><strong>Other Requirements:</strong> @course.getOtherRequirements()</p>
                     </div>
                 </div>
@@ -39,4 +58,4 @@
             </div>
     @*</div>*@
     <hr>
-}(false)(null)
+}(true)("CourseCartCtrl")

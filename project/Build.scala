@@ -12,6 +12,7 @@ object ApplicationBuild extends Build {
     "mysql" % "mysql-connector-java" % "5.1.18",
     javaCore,
     javaJdbc,
+    cache,
     javaEbean
   )
 

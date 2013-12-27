@@ -1,0 +1,14 @@
+@(User: User)
+@_chrome{
+    @_navigation(User)("home")
+} {
+    @defining(Application._getAppSettings()) { Settings=>
+    <!-- Main jumbotron for a primary marketing message or call to action -->
+        <div class="container">
+            <div class="page-header">
+                <h1>Unauthorized</h1>
+            </div>
+            <p class="lead">You do not have the appropriate permissions to view this page.</p>
+            <hr>
+    } @* end Settings defining block *@
+}(false)(null)

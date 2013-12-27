@@ -1,0 +1,14 @@
+<div id="slideOutBtn" ng-controller="CourseCartCtrl" class="slideout">
+    <img src="@routes.Assets.at("images/coursecart.png")" alt="Course Cart" />
+    <div id="slideOutContent" class="slideout_inner">
+        <div id="slideOutContentWrapper" class="none">
+
+            <span ng-show="isCourseCartEmpty()">Add classes you are interested in here for future reference in the Schedule Planner.</span>
+            <li ng-repeat="class in courseCartArray">
+                {{class.name}}
+                <span ng-click="removeCourseFromCart(class.id)" class="glyphicon glyphicon-remove"></span>
+            </li>
+        </div>
+
+    </div>
+</div>

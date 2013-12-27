@@ -20,6 +20,7 @@ create table course (
   id                        bigint auto_increment not null,
   name                      varchar(255),
   availability              varchar(255),
+  part_of_schedule          tinyint(1) default 0,
   credit_type               varchar(255),
   visible                   tinyint(1) default 0,
   category_id               bigint,
@@ -29,8 +30,16 @@ create table course (
   constraint pk_course primary key (id))
 ;
 
+create table course_cart (
+  id                        bigint auto_increment not null,
+  user_id                   bigint,
+  selections                varchar(255),
+  constraint pk_course_cart primary key (id))
+;
+
 create table schedule (
   id                        bigint auto_increment not null,
+  secret_key                varchar(255),
   user                      bigint,
   freshman_classes          varchar(255),
   freshman_top_course       varchar(255),
@@ -49,12 +58,23 @@ create table schedule (
   constraint pk_schedule primary key (id))
 ;
 
+create table settings (
+  id                        integer auto_increment not null,
+  app_name                  varchar(255),
+  freshman_message          longtext,
+  sophomore_message         longtext,
+  junior_message            longtext,
+  senior_message            longtext,
+  constraint pk_settings primary key (id))
+;
+
 create table user (
   id                        bigint auto_increment not null,
   email                     varchar(255),
   password                  varchar(255),
   first_name                varchar(255),
   last_name                 varchar(255),
+  role                      varchar(255),
   constraint pk_user primary key (id))
 ;
 
@@ -85,7 +105,11 @@ drop table category;
 
 drop table course;
 
+drop table course_cart;
+
 drop table schedule;
+
+drop table settings;
 
 drop table user;
 

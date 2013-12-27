@@ -1,0 +1,80 @@
+@(User: User)
+@import controllers.Application
+
+@_chrome{
+    @_navigation(User)("admin__appsettings")
+} {
+    @defining(Application._getAppSettings()) { Settings=>
+    <div class="container">
+        <div class="page-header">
+            <h1>Application Settings <span class="admin-badge label label-primary">ADMIN</span></h1>
+        </div>
+        <p>
+            Here you can manage various settings of the Mogo Dashboard. <br />
+           <em>If you are experiencing issues, try <a href="@routes.Admin.resetCache()">resetting the cache.</a></em>
+        </p>
+
+        @if(flash().contains("error")) {
+            <div class="alert alert-danger alert-dismissable">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                @flash.get("error")
+            </div>
+        }
+        @if(flash().contains("success")) {
+            <div class="alert alert-success alert-dismissable">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                @flash.get("success")
+            </div>
+        }
+        <br />
+
+
+        <form class="form-horizontal" role="form" method="POST" action="@routes.Admin.saveAppSettings()">
+
+            <div class="form-group">
+                <label for="appName" class="col-sm-2 control-label">Application Name</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="appName" name="appName" value="@Settings.getAppName()">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="freshmanMessage" class="col-sm-2 control-label">Freshman Message</label>
+                <div class="col-sm-10">
+                    <textarea type="text" rows="10" class="form-control" id="freshmanMessage" name="freshmanMessage">@Settings.getFreshmanMessage()</textarea>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="sophomoreMessage" class="col-sm-2 control-label">Sophomore Message</label>
+                <div class="col-sm-10">
+                    <textarea type="text" rows="10" class="form-control" id="sophomoreMessage" name="sophomoreMessage">@Settings.getSophomoreMessage()</textarea>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="juniorMessage" class="col-sm-2 control-label">Junior Message</label>
+                <div class="col-sm-10">
+                    <textarea type="text" rows="10" class="form-control" id="juniorMessage" name="juniorMessage">@Settings.getJuniorMessage()</textarea>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="seniorMessage" class="col-sm-2 control-label">Senior Message</label>
+                <div class="col-sm-10">
+                    <textarea type="text" rows="10" class="form-control" id="seniorMessage" name="seniorMessage">@Settings.getSeniorMessage()</textarea>
+                </div>
+            </div>
+
+
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <input type="submit" class="btn btn-primary" value="Save">
+                </div>
+            </div>
+        </form>
+
+
+    <hr>
+    }
+}(false)(null)

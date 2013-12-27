@@ -1,11 +1,10 @@
 package models;
 
 import play.db.ebean.Model;
-import sun.misc.BASE64Encoder;
-
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import java.sql.Timestamp;
 
 /**
  * Author: maxzats
@@ -21,6 +20,8 @@ public class Schedule {
 
     @Id
     private Long id;
+
+    private String secretKey;
 
     private Long user;
 
@@ -180,4 +181,20 @@ public class Schedule {
     public void setPECredits(int PECredits) {
         this.PECredits = PECredits;
     }
+
+    public void generateMD5()
+    {
+        if(this.secretKey == null)
+        {
+            java.util.Date date= new java.util.Date();
+            Timestamp timestamp = new Timestamp(date.getTime());
+            String key = timestamp.toString();
+            this.secretKey = MZMD5.buildMD5(key);
+        }
+    }
+
+    public String getSecretKey() {
+        return secretKey;
+    }
+
 }

@@ -1,5 +1,6 @@
 package controllers;
 
+import controllers.com.mogo.shared.Cornelius;
 import models.Category;
 import models.Course;
 import models.User;
@@ -19,8 +20,8 @@ public class Courses extends Controller {
 
     public static Result view()
     {
-        List<Course> courses = Course.find.where().eq("visible", true).findList();
-        List<Category> categories = Category.find.all();
+        List<Course> courses = Cornelius.getAllVisibleCourses();
+        List<Category> categories = Cornelius.getAllCategories();
         User currentUser = Application.getUser();
 
 

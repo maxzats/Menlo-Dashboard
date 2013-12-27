@@ -27,6 +27,72 @@ $(document).ready(function(){
         $("#editCourseAvailability").val(finalAvailabilityString);
     });
 
+    $("#newCourseCreditType").change(function(){
+        if($("#newCourseCreditType").val() == "PE")
+        {
+            $('#newCourseDuration')
+                .find('option')
+                .remove()
+                .end()
+                .append('<option value="3">Fall</option>')
+                .append('<option value="4">Winter</option>')
+                .append('<option value="5">Spring</option>')
+                .val('3');
+
+            $("#newCoursePartOfScheduleContainer").show();
+            $("#durationText").html("Time of Year");
+        }
+        else
+        {
+            $('#newCourseDuration')
+                .find('option')
+                .remove()
+                .end()
+                .append('<option value="12">Yearlong</option>')
+                .append('<option value="1">First Semester</option>')
+                .append('<option value="2">Second Semester</option>')
+                .val('12');
+
+            $("#newCoursePartOfScheduleContainer").hide();
+            $("#durationText").html("Duration");
+        }
+    });
+
+    $("#editCourseCreditType").change(function(){
+        if($("#editCourseCreditType").val() == "PE")
+        {
+            $('#editCourseDuration')
+                .find('option')
+                .remove()
+                .end()
+                .append('<option value="3">Fall</option>')
+                .append('<option value="4">Winter</option>')
+                .append('<option value="5">Spring</option>')
+                .val('3');
+
+            $("#editCoursePartOfScheduleContainer").show();
+            $("#editDurationText").html("Time of Year");
+        }
+        else
+        {
+            $('#editCourseDuration')
+                .find('option')
+                .remove()
+                .end()
+                .append('<option value="12">Yearlong</option>')
+                .append('<option value="1">First Semester</option>')
+                .append('<option value="2">Second Semester</option>')
+                .val('12');
+
+            $("#editCoursePartOfScheduleContainer").hide();
+
+            if ( $("#editCoursePartOfSchedule").checked )
+                $("#editCoursePartOfSchedule").check();
+
+            $("#editDurationText").html("Duration");
+        }
+    });
+
     $('.edit-course').click(function(){
         var courseId = $(this).data('course-id');
         var routeObj = Routes.getCourse;
@@ -61,7 +127,6 @@ $(document).ready(function(){
                         $("#editCourseCategory").val(data.category.id);
 
                     // Credit Type
-                    console.log(data);
                     if(data.creditType !== null)
                         $("#editCourseCreditType").val(data.creditType);
 
@@ -69,6 +134,29 @@ $(document).ready(function(){
                     if(data.duration !== null)
                     {
                         $("#editCourseDuration").val(data.duration);
+                    }
+
+
+                    // Do the PE stuff
+                    if(data.creditType == "PE" )
+                    {
+                        $("#editCourseCreditType").val("PE");
+                        $('#editCourseDuration')
+                            .find('option')
+                            .remove()
+                            .end()
+                            .append('<option value="3">Fall</option>')
+                            .append('<option value="4">Winter</option>')
+                            .append('<option value="5">Spring</option>')
+                            .val('3');
+
+                        $("#editCoursePartOfScheduleContainer").show();
+
+                        if(data.partOfSchedule == "1") {
+                            alert("It's part of schedule");
+                            $("#editCoursePartOfSchedule").click();
+                        }
+                        $("#editDurationText").html("Time of Year");
                     }
 
                     // Suggested for

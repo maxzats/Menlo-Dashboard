@@ -1,10 +1,11 @@
 package models;
 
+import com.avaje.ebean.Ebean;
 import play.db.ebean.Model;
-import sun.misc.BASE64Encoder;
-
 import javax.persistence.Entity;
 import javax.persistence.Id;
+
+import static play.mvc.Controller.request;
 
 /**
  * Author: maxzats
@@ -25,6 +26,7 @@ public class User {
     private String password;
     private String firstName;
     private String lastName;
+    private String role;    // Student or Admin
 
     public Long getId() {
         return id;
@@ -66,10 +68,29 @@ public class User {
         this.lastName = lastName;
     }
 
+    public String getSecretScheduleLink() {
+        Schedule schedule = Ebean.find(Schedule.class).where().eq("user", this.id).findUnique();
+
+        if (schedule == null || schedule.getSecretKey() == null )
+        {
+            return "Error: Couldn't generate your secrete schedule link.";
+        }
+
+        String link = controllers.routes.SchedulePlanner.viewSecretSchedule(schedule.getSecretKey()).absoluteURL(request());
+        return link;
+    }
     public String getEncryptedPassword() {
         String salt = "f98a!!#5988A_CMS_11_58AUG_play21";
         String saltedPassword = this.password+salt;
 
-        return new BASE64Encoder().encode(saltedPassword.getBytes());
+        return new sun.misc.BASE64Encoder().encode(saltedPassword.getBytes());
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }

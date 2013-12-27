@@ -10,11 +10,26 @@
 
 $(document).ready(function(){
 
+    $("#slideOutBtn").mouseover(function(){
+        $("#slideOutBtn").addClass("slideoutHover");
+        $("#slideOutBtn").removeClass("slideout");
+        $("#slideOutContent").addClass("slideout_innerHover");
+        $("#slideOutContent").removeClass("slideout_inner");
+    });
+
+    $("#slideOutBtn").mouseout(function(){
+        $("#slideOutBtn").removeClass("slideoutHover");
+        $("#slideOutBtn").addClass("slideout");
+        $("#slideOutContent").removeClass("slideout_innerHover");
+        $("#slideOutContent").addClass("slideout_inner");
+    });
+
     $('a').click(function(evt){
         if($(this).href == "#")
             evt.preventDefault();
-    })
+    });
 
+    $('#requiredCoursesTab').click();
 
     $("#freshmanCourseSelect, #freshmanTopCourseSelect, #sophomoreCourseSelect, #sophomoreTopCourseSelect, " +
         "#juniorCourseSelect, #juniorTopCourseSelect, #seniorTopCourseSelect, #seniorCourseSelect").typeahead({
@@ -29,10 +44,23 @@ $(document).ready(function(){
         engine: Hogan
     });
 
+    $("#freshmanPESelect, #sophomorePESelect, #juniorPESelect, #seniorPESelect").typeahead({
+        valueKey: 'name',
+        prefetch: {
+            url: Routes.PETypeAhead,
+            ttl: 0
+        },
+        template: [
+            '<p>{{name}}</p>'
+        ].join(''),
+        engine: Hogan
+    });
+
     $(".typeahead").bind('blur', function(){
         $(this).val('');
     });
 
+    $("#slideOutBtn").hide();
 
     // ANIMATIONS
     $("#freshmanExpand").click(function(){
@@ -48,6 +76,8 @@ $(document).ready(function(){
         setTimeout(function(){
             $("#main-container").fadeIn();
             $("#freshmanExpanded").fadeIn('slow');
+            $("#slideOutBtn").fadeIn();
+
         }, 500);
     });
 
@@ -64,6 +94,8 @@ $(document).ready(function(){
         setTimeout(function(){
             $("#main-container").fadeIn();
             $("#sophomoreExpanded").fadeIn('slow');
+            $("#slideOutBtn").fadeIn();
+
         }, 500);
     });
 
@@ -80,6 +112,8 @@ $(document).ready(function(){
         setTimeout(function(){
             $("#main-container").fadeIn();
             $("#juniorExpanded").fadeIn('slow');
+            $("#slideOutBtn").fadeIn();
+
         }, 500);
     });
 
@@ -96,12 +130,16 @@ $(document).ready(function(){
         setTimeout(function(){
             $("#main-container").fadeIn();
             $("#seniorExpanded").fadeIn('slow');
+            $("#slideOutBtn").fadeIn();
+
         }, 500);
     });
 
     $("#freshmanContract").click(function(){
         $("#freshmanExpanded").fadeOut('slow');
         $("#main-container").fadeOut();
+        $("#slideOutBtn").fadeOut();
+
 
         setTimeout(function(){
             $("#graduationRequirements").fadeIn();
@@ -117,6 +155,7 @@ $(document).ready(function(){
     $("#sophomoreContract").click(function(){
         $("#sophomoreExpanded").fadeOut('slow');
         $("#main-container").fadeOut();
+        $("#slideOutBtn").fadeOut();
 
         setTimeout(function(){
             $("#graduationRequirements").fadeIn();
@@ -132,6 +171,7 @@ $(document).ready(function(){
     $("#juniorContract").click(function(){
         $("#juniorExpanded").fadeOut('slow');
         $("#main-container").fadeOut();
+        $("#slideOutBtn").fadeOut();
 
         setTimeout(function(){
             $("#graduationRequirements").fadeIn();
@@ -147,6 +187,7 @@ $(document).ready(function(){
     $("#seniorContract").click(function(){
         $("#seniorExpanded").fadeOut('slow');
         $("#main-container").fadeOut();
+        $("#slideOutBtn").fadeOut();
 
         setTimeout(function(){
             $("#graduationRequirements").fadeIn();
@@ -178,12 +219,12 @@ var Scheduler = {
 
     },
 
-    clearAllCourseFlags: function(list)
-    {
-        for(var i=0; i<list.length; i++)
-        {
-            list[i].flagged = false;
-        }
+
+    __getCourseCart: function() {
+        return $.ajax({
+            type: "GET",
+            url: Routes.getCoursesCartRoute
+        });
     },
 
     __getCurrentSchedule: function() {
@@ -240,32 +281,30 @@ var Scheduler = {
 
     save: function(freshmanSchedule, freshmanTopCourse, sophomoreTopCourse,
                    juniorTopCourse, seniorTopCourse, sophomoreSchedule, juniorSchedule, seniorSchedule) {
-        if(freshmanTopCourse === undefined || freshmanTopCourse.length == 0)
+        if(freshmanTopCourse[0] == undefined || freshmanTopCourse.length == 0)
         {
             freshmanTopCourse = new Array();
             freshmanTopCourse.push({id: -1});
         }
 
-        if(sophomoreTopCourse === undefined || sophomoreTopCourse.length == 0)
+        if(sophomoreTopCourse[0] == undefined || sophomoreTopCourse.length == 0)
         {
             sophomoreTopCourse = new Array();
             sophomoreTopCourse.push({id: -1});
         }
 
-        if(juniorTopCourse === undefined || juniorTopCourse.length == 0)
+        if(juniorTopCourse[0] == undefined || juniorTopCourse.length == 0)
         {
             juniorTopCourse = new Array();
             juniorTopCourse.push({id: -1});
         }
 
-        if(seniorTopCourse === undefined || seniorTopCourse.length == 0)
+        if(seniorTopCourse[0] == undefined || seniorTopCourse.length == 0)
         {
             seniorTopCourse = new Array();
             seniorTopCourse.push({id: -1});
         }
 
-        console.log("Freshman top course:");
-        console.log(freshmanTopCourse);
         var freshmanIDList = this.generateList(freshmanSchedule),
             sophomoreIDList = this.generateList(sophomoreSchedule),
             juniorIDList = this.generateList(juniorSchedule),
@@ -279,7 +318,6 @@ var Scheduler = {
             juniorNotes = ( $("#juniorNotes").val() == "null") ? "" : $("#juniorNotes").val(),
             seniorNotes = ( $("#seniorNotes").val() == "null") ? "" : $("#seniorNotes").val();
 
-        console.log("Saving: "+freshmanTopCourse);
 
         var data = '{' +
             '"freshmanClasses": "'+freshmanIDList+'",' +
@@ -296,7 +334,6 @@ var Scheduler = {
             '"seniorNotes": "'+seniorNotes+'"' +
             '}';
 
-        console.log(data);
 
         $.ajax({
             type: "POST",
@@ -323,7 +360,7 @@ var Scheduler = {
         var count = 0;
         for(var i=0; i<arr.length; i++)
         {
-            if( (arr[i].duration == "1" || arr[i].duration == "12") && arr[i].creditType !== "PE")
+            if( arr[i].duration != "2" && arr[i].partOfSchedule )
             {
                 count++;
             }
@@ -338,7 +375,7 @@ var Scheduler = {
         var count = 0;
         for(var i=0; i<arr.length; i++)
         {
-            if( (arr[i].duration == "2" || arr[i].duration == "12") && arr[i].creditType !== "PE")
+            if( arr[i].duration != "1"  && arr[i].partOfSchedule)
             {
                 count++;
             }
@@ -385,6 +422,54 @@ var Scheduler = {
 };
 
 
+function CourseCartCtrl($scope, $filter)
+{
+    var promise = Scheduler.__getCourses();
+
+
+    $scope.classes = new Array();
+    $scope.courseCartArray = new Array();
+
+    promise.success(function(data){
+        var parsedData = JSON.parse(data);
+
+        $scope.$apply(function(){
+            $scope.classes = parsedData;
+        });
+
+        var savedCourseCartPromise = Scheduler.__getCourseCart();
+
+        savedCourseCartPromise.success(function(data){
+            data = JSON.parse(data);
+            var selections = data.selections.split(',');
+
+            for(var i=0; i<selections.length; i++)
+            {
+                $scope.safeApply(function(){
+                    $scope.addCourseToCart(selections[i], false);
+                });
+            }
+        });
+
+    });
+
+    $scope.addCourseToCart = function(courseId, save) {
+        for(var i=0; i<$scope.classes.length; i++)
+        {
+            if($scope.classes[i].id == courseId)
+            {
+                if($.inArray($scope.classes[i], $scope.courseCartArray) == -1)
+                {
+                    popCart(true);
+                    $scope.courseCartArray.push($scope.classes[i]);
+                    if(save)
+                        $scope.saveCourseCart();
+                }
+            }
+        }
+    };
+}
+
 function SchedulerCtrl($scope, $filter) {
     var promise = Scheduler.__getCourses();
     var requiredCoursePromise = Scheduler._getRequiredCourses();
@@ -410,12 +495,12 @@ function SchedulerCtrl($scope, $filter) {
 
     $scope.schedule = {
         serviceHours: "0",
-        requiredHours: "80",
+        requiredHours: "40",
         artsCredits: "0",
         PECredits: "0",
         savedPECredits: "0",
         requiredArtsCredits: "15",
-        requiredPECredits: "20"
+        requiredPECredits: "15"
     };
 
     $scope.getTopCourse = function(list) {
@@ -649,6 +734,17 @@ function SchedulerCtrl($scope, $filter) {
     };
 
 
+    // Returning false will prevent it from showing, so we return false when it IS empty
+    $scope.requirementsNotEmpty = function(requirementsText) {
+
+        if( ( (requirementsText.toLowerCase()).indexOf("none") != -1 && requirementsText.length < 7 ) || requirementsText.length == 0 )
+        {
+            return false;
+        }
+
+        return true;
+    };
+
     promise.success(function(data){
         var parsedData = JSON.parse(data);
 
@@ -869,7 +965,33 @@ function SchedulerCtrl($scope, $filter) {
         $scope.addCourse(datum, "freshmen");
     });
 
+    $('#freshmanPESelect').bind('typeahead:selected', function(obj, datum) {
+        $(this).val('');
 
+        $scope.addCourse(datum, "freshmen");
+
+    });
+
+    $('#sophomorePESelect').bind('typeahead:selected', function(obj, datum) {
+        $(this).val('');
+
+        $scope.addCourse(datum, "sophomores");
+
+    });
+
+    $('#juniorPESelect').bind('typeahead:selected', function(obj, datum) {
+        $(this).val('');
+
+        $scope.addCourse(datum, "juniors");
+
+    });
+
+    $('#seniorPESelect').bind('typeahead:selected', function(obj, datum) {
+        $(this).val('');
+
+        $scope.addCourse(datum, "seniors");
+
+    });
 
     $('#freshmanTopCourseSelect').bind('typeahead:selected', function(obj, datum) {
         $(this).val('');
@@ -954,7 +1076,7 @@ function SchedulerCtrl($scope, $filter) {
         {
             index++;
         }
-        if(topCourse.length !== 0 && topCourse[0].id == id)
+        if(topCourse != undefined && topCourse[0] != undefined && topCourse[0].length !== 0 && topCourse[0].id == id)
         {
             $scope.freshmanTopCourse = [];
         }
@@ -1026,19 +1148,19 @@ function SchedulerCtrl($scope, $filter) {
     }
 
     $scope.firstSemester = function(item) {
-        if (!item)
+        if (!item || !item.partOfSchedule)
             return false;
 
-        if( (item.duration == "1" || item.duration == "12") && item.creditType != "PE")
+        if( item.duration != "2" && item.partOfSchedule)
         {
             return true;
         }
     };
 
     $scope.secondSemester = function(item) {
-        if (!item)
+        if (!item || !item.partOfSchedule)
             return false;
-        if( (item !== null && item.duration == "2" || item.duration == "12") && item.creditType != "PE")
+        if( item.duration != "1" && item.partOfSchedule)
         {
             return true;
         }
@@ -1049,7 +1171,7 @@ function SchedulerCtrl($scope, $filter) {
         if(!item)
             return false;
 
-        if(item !== null && item.creditType == "PE")
+        if(item !== null && item.creditType == "PE" && !item.partOfSchedule)
             return true;
     }
 
@@ -1229,3 +1351,24 @@ function SchedulerCtrl($scope, $filter) {
 
     }
 };
+
+/**
+ * "Pops" the CourseCart to notify the user that a course has been added
+ */
+function popCart(close) {
+
+    $("#slideOutBtn").addClass("slideoutHover");
+    $("#slideOutBtn").removeClass("slideout");
+    $("#slideOutContent").addClass("slideout_innerHover");
+    $("#slideOutContent").removeClass("slideout_inner");
+
+    if(close)
+    {
+        setTimeout(function(){
+            $("#slideOutBtn").removeClass("slideoutHover");
+            $("#slideOutBtn").addClass("slideout");
+            $("#slideOutContent").removeClass("slideout_innerHover");
+            $("#slideOutContent").addClass("slideout_inner");
+        }, 2500);
+    }
+}

@@ -1,10 +1,7 @@
 package models;
 
 import play.db.ebean.Model;
-
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Author: maxzats
@@ -23,6 +20,11 @@ public class Course {
     private String name;
 
     private String availability;
+
+    private boolean partOfSchedule;
+
+    @Transient
+    private String partOfScheduleTransientString;
 
     private String creditType; // class, art, or PE
 
@@ -101,7 +103,7 @@ public class Course {
 
     public String getDescription() {
         String formattedDescription = description;
-        formattedDescription.replace("\n", "<br />").replace("\r", "<br />");
+        formattedDescription = formattedDescription.replace("\n", "<br />");
         return formattedDescription;
     }
 
@@ -112,7 +114,6 @@ public class Course {
     public String getOtherRequirements() {
 
         String requirements = otherRequirements;
-        requirements.replace("\n", "<br />").replace("\r", "<br />").replace("cr\\\\lf", "<br />");
         return requirements;
     }
 
@@ -158,5 +159,21 @@ public class Course {
 
     public void setCreditType(String creditType) {
         this.creditType = creditType;
+    }
+
+    public boolean isPartOfSchedule() {
+        return partOfSchedule;
+    }
+
+    public void setPartOfSchedule(boolean partOfSchedule) {
+        this.partOfSchedule = partOfSchedule;
+    }
+
+    public String getPartOfScheduleTransientString() {
+        return partOfScheduleTransientString;
+    }
+
+    public void setPartOfScheduleTransientString(String partOfScheduleTransientString) {
+        this.partOfScheduleTransientString = partOfScheduleTransientString;
     }
 }

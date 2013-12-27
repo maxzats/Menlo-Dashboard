@@ -1,6 +1,9 @@
 package controllers;
 
+import com.avaje.ebean.Ebean;
+import controllers.com.mogo.shared.Cornelius;
 import models.MZError;
+import models.Settings;
 import models.User;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import play.Logger;
@@ -9,12 +12,12 @@ import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
 import views.html.home;
-
 import java.util.List;
 
 public class Application extends Controller {
 
     private final static Form<User> LOGIN_FORM = Form.form(User.class);
+    private final static String INDEX_URL = routes.Application.index().toString();
 
     public static Result index()
     {
@@ -23,6 +26,29 @@ public class Application extends Controller {
         return ok(home.render(currentUser));
     }
 
+    public static Settings _getAppSettings()
+    {
+        Settings appSettings = Cornelius.getAppSettings();
+
+        if(appSettings != null)
+        {
+            return appSettings;
+        }
+        else
+        {
+            Settings defaultSettings = new Settings();
+
+            /** Default Settings **/
+            defaultSettings.setAppName("Mogo Dashboard");
+            defaultSettings.setFreshmanMessage("Admins: You can change this message in the Admin Control Panel.");
+            defaultSettings.setSophomoreMessage("Admins: You can change this message in the Admin Control Panel.");
+            defaultSettings.setJuniorMessage("Admins: You can change this message in the Admin Control Panel.");
+            defaultSettings.setSeniorMessage("Admins: You can change this message in the Admin Control Panel.");
+            Ebean.save(defaultSettings);
+
+            return defaultSettings;
+        }
+    }
     public static Result login()
     {
         // Get the submitted form
@@ -36,11 +62,11 @@ public class Application extends Controller {
         String submittedEmail = submittedForm.get().getEmail();
         String submittedPassword = submittedForm.get().getEncryptedPassword();
 
-        Logger.debug(submittedEmail+" attempt with password: "+submittedPassword);
+        Logger.debug(submittedEmail+" attempt with password: "+submittedForm.get().getPassword());
 
         if(submittedEmail.isEmpty() || submittedPassword.isEmpty())
         {
-            return ok(new MZError("Please enter a username or password.").sendError());
+            return ok(new MZError("Please enter a username and password.").sendError());
         }
         // Find all the users that match
         List<User> foundUsers = User.find.where().eq("email", submittedEmail).eq("password", submittedPassword).findList();
@@ -62,7 +88,7 @@ public class Application extends Controller {
 
         // Send a URL to redirect
         ObjectNode response = Json.newObject();
-        response.put("url", routes.Application.index().toString());
+        response.put("url", INDEX_URL);
 
         return ok(response);
 
@@ -94,6 +120,6 @@ public class Application extends Controller {
     {
         session().clear();
 
-        return redirect(routes.Application.index());
+        return redirect(INDEX_URL);
     }
 }

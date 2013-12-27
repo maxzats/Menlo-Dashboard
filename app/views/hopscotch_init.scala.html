@@ -1,0 +1,33 @@
+<script src="@routes.Assets.at("javascripts/hopscotch-0.1.2.min.js")"></script>
+<link href="@routes.Assets.at("stylesheets/hopscotch.min.css")" rel="stylesheet">
+<style>
+div.hopscotch-bubble .hopscotch-bubble-close {
+    color: #000;
+    background: transparent url(@routes.Assets.at("images/sprite-green-0.3.png")) -192px -92px no-repeat;
+    display: block;
+    padding: 14px;
+    position: absolute;
+    text-decoration: none;
+    text-indent: -9999px;
+    width: 8px;
+    height: 8px;
+    top: 0;
+    right: 0;
+}
+div.hopscotch-bubble .hopscotch-bubble-close.hide,
+div.hopscotch-bubble .hopscotch-bubble-close.hide-all {
+    display: none;
+}
+div.hopscotch-bubble .hopscotch-bubble-number {
+    background: transparent url(@routes.Assets.at("images/sprite-green-0.3.png")) 0 0 no-repeat;
+    color: #fff;
+    display: block;
+    float: left;
+    font-size: 17px;
+    font-weight: bold;
+    line-height: 31px;
+    text-align: center;
+    width: 30px;
+    height: 30px;
+}
+</style>

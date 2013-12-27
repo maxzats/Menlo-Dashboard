@@ -3,53 +3,61 @@
 # ~~~~
 
 # Home page
-GET         /                             controllers.Application.index()
+GET         /                                     controllers.Application.index()
 
 # Login
-POST        /login                        controllers.Application.login()
+POST        /login                                controllers.Application.login()
 
 # Logout
-GET         /logout                       controllers.Application.logout()
+GET         /logout                               controllers.Application.logout()
 
 # Course Catalog
-GET         /courses                      controllers.Courses.view()
+GET         /courses                              controllers.Courses.view()
 
 # Schedule Planner
-GET         /schedule                     controllers.SchedulePlanner.view()
-POST        /schedule/save                controllers.SchedulePlanner.save()
-POST        /schedule/saveServiceHours    controllers.SchedulePlanner.saveServiceHours()
-POST        /schedule/savePECredits       controllers.SchedulePlanner.savePECredits()
+GET         /schedule                             controllers.SchedulePlanner.view()
+GET         /schedule/shared/:secretKey           controllers.SchedulePlanner.viewSecretSchedule(secretKey: String)
+POST        /schedule/save                        controllers.SchedulePlanner.save()
+POST        /schedule/saveServiceHours            controllers.SchedulePlanner.saveServiceHours()
+POST        /schedule/savePECredits               controllers.SchedulePlanner.savePECredits()
 
 # Course Objects for Angular-based Schedule Planner
-GET         /classes                      controllers.SchedulePlanner.courseObjects()
-GET         /loadschedule                 controllers.SchedulePlanner.loadSchedule()
-GET         /courseTypeahead              controllers.SchedulePlanner.courseTypeahead()
-GET         /requiredCourses              controllers.SchedulePlanner.getRequiredCourses()
+GET         /classes                              controllers.SchedulePlanner.courseObjects()
+GET         /loadschedule                         controllers.SchedulePlanner.loadSchedule()
+GET         /courseTypeahead                      controllers.SchedulePlanner.courseTypeahead()
+GET         /PETypeahead                          controllers.SchedulePlanner.PETypeahead()
+GET         /requiredCourses                      controllers.SchedulePlanner.getRequiredCourses()
 
+POST        /saveCourseCart                       controllers.SchedulePlanner.saveCourseCart()
+GET         /getCourseCart                        controllers.SchedulePlanner.getCourseCart()
 
-#GET         /fixclasses                   controllers.Application.fixClasses()
-
+#GET        /fixclasses                   controllers.Application.fixClasses()
 
 # Admin Panel Routes
 
 ## Categories
-GET         /admin/categories             controllers.Admin.manageCategories()
-POST        /admin/category/delete        controllers.Admin.deleteCategory()
-POST        /admin/category/edit          controllers.Admin.editCategory()
-POST        /admin/category/new           controllers.Admin.newCategory()
+GET         /admin/categories                     controllers.Admin.manageCategories()
+POST        /admin/category/delete                controllers.Admin.deleteCategory()
+POST        /admin/category/edit                  controllers.Admin.editCategory()
+POST        /admin/category/new                   controllers.Admin.newCategory()
 
 ## Courses
-GET         /admin/courses                controllers.Admin.manageCourses()
-GET         /admin/courses/required       controllers.Admin.manageRequiredCourses()
-POST        /admin/courses/required/new   controllers.Admin.newBucket()
-POST        /admin/courses/required/delete   controllers.Admin.deleteBucket()
-POST        /admin/courses/required/edit   controllers.Admin.editBucket()
-POST        /admin/course/delete          controllers.Admin.deleteCourse()
-POST        /admin/course/new             controllers.Admin.newCourse()
-POST        /admin/course/edit            controllers.Admin.editCourse()
+GET         /admin/courses                        controllers.Admin.manageCourses()
+GET         /admin/courses/required               controllers.Admin.manageRequiredCourses()
+POST        /admin/courses/required/new           controllers.Admin.newBucket()
+POST        /admin/courses/required/delete        controllers.Admin.deleteBucket()
+POST        /admin/courses/required/edit          controllers.Admin.editBucket()
+POST        /admin/course/delete                  controllers.Admin.deleteCourse()
+POST        /admin/course/new                     controllers.Admin.newCourse()
+POST        /admin/course/edit                    controllers.Admin.editCourse()
+POST        /admin/settings/save                  controllers.Admin.saveAppSettings()
 
-GET         /admin/getCourse/:id          controllers.Admin.getCourse(id: Integer)
-GET         /admin/getBucket/:id          controllers.Admin.getBucket(id: Integer)
+GET         /admin/cache/reset                    controllers.Admin.resetCache()
+GET         /admin/getCourse/:id                  controllers.Admin.getCourse(id: Integer)
+GET         /admin/getBucket/:id                  controllers.Admin.getBucket(id: Integer)
+GET         /admin/courseTypeahead                controllers.Admin.courseTypeahead()
 
+## App Settings
+GET         /admin/settings                       controllers.Admin.manageAppSettings()
 # Map static resources from the /public folder to the /assets URL path
-GET         /assets/*file                 controllers.Assets.at(path="/public", file)
+GET         /assets/*file                         controllers.Assets.at(path="/public", file)

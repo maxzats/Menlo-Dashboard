@@ -2,6 +2,7 @@
 @_chrome{
     @_navigation(User)("home")
 } {
+    @defining(Application._getAppSettings()) { Settings=>
     <style>
     .menlo-logo{
         background-repeat: no-repeat;
@@ -18,9 +19,9 @@
             @if(User != null) {
                 <h1>Welcome, @User.getFirstName()</h1>
             } else {
-                <h1>Menlo Dashboard</h1>
+                <h1>@Settings.getAppName()</h1>
             }
-            <p>With the Menlo Dashboard, you can:
+            <p>With @Settings.getAppName(), you can:
                 <ul>
                     <li>Plan courses for Freshman, Sophomore, Junior, and Senior year</li>
                     <li>Quickly lookup course requirements</li>
@@ -53,4 +54,5 @@
         </div>
 
         <hr>
+    } @* end Settings defining block *@
 }(false)(null)

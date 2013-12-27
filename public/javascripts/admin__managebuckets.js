@@ -200,9 +200,9 @@ function BucketCtrl($scope, $filter) {
                     window.location = window.location;
                 else
                 {
-                    if(data.error)
+                    if(data.errors)
                     {
-                        $("#newBucketError").html(data.error);
+                        $("#newBucketError").html(data.errorMessage);
                         $("#newBucketError").fadeIn();
                     }
                 }

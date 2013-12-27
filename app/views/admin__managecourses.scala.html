@@ -133,7 +133,7 @@
                             <div class="form-group">
                                 <label for="creditType" class="col-lg-3 control-label">Credit Type</label>
                                 <div class="col-lg-9">
-                                    <select class="form-control" name="creditType">
+                                    <select class="form-control" name="creditType" id="newCourseCreditType">
                                         <option value="class">Class</option>
                                         <option value="art">Art</option>
                                         <option value="PE">P.E.</option>
@@ -141,8 +141,15 @@
                                 </div>
                             </div>
 
+                            <div class="form-group mzhidden" id="newCoursePartOfScheduleContainer">
+                                <label for="creditType" class="col-lg-3 control-label">Part of Schedule?</label>
+                                <div class="col-lg-9">
+                                    <input type="checkbox" id="newCoursePartOfSchedule" name="partOfScheduleTransientString" value="true">
+                                </div>
+                            </div>
+
                             <div class="form-group">
-                                <label for="newCourseDuration" class="col-lg-3 control-label">Duration</label>
+                                <label for="newCourseDuration" id="durationText" class="col-lg-3 control-label">Duration</label>
                                 <div class="col-lg-9">
                                     <select id="newCourseDuration" name="duration" class="form-control">
                                         <option value="12">Year-long</option>
@@ -254,8 +261,16 @@
                                     </select>
                                 </div>
                             </div>
+
+                            <div class="form-group mzhidden" id="editCoursePartOfScheduleContainer">
+                                <label for="creditType" class="col-lg-3 control-label">Part of Schedule?</label>
+                                <div class="col-lg-9">
+                                    <input type="checkbox" id="editCoursePartOfSchedule" name="partOfScheduleTransientString" value="true">
+                                </div>
+                            </div>
+
                             <div class="form-group">
-                                <label for="editCourseDuration" class="col-lg-3 control-label">Duration</label>
+                                <label for="editCourseDuration" id="editDurationText" class="col-lg-3 control-label">Duration</label>
                                 <div class="col-lg-9">
                                     <select id="editCourseDuration" name="duration" class="form-control">
                                         <option value="12">Year-long</option>
